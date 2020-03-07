@@ -5,7 +5,13 @@ import numpy as np
 from prettytable import PrettyTable
 
 class BLTagger(object):
+    """Baseline Tagger
+    Using max likelihood to tag all words
+    """
     def __init__(self, train_pairs):
+        """Initialize a baseline tagger
+        @param train_pairs (List of Tuple): Each with format (word, tag)
+        """
         self.word_tag_dic = self._build(train_pairs)
         print("Finish building baseline tagger")
 
@@ -146,7 +152,6 @@ class HMMTagger(object):
                         try:
                             score = viterbi[s_][t-1]*self.A[s_][s]*self.B[(sent[t],self.id2tag[s])]
                         except:
-                            # score = vciterbi[s_][t-1]*self.A[s_][s]/self.vocab_size
                             score = 0
                         if max_score < score:
                             max_score = score
@@ -171,4 +176,3 @@ class HMMTagger(object):
                 print("Processing %d item..."%idx)
         print("Test %d examples in %.5f seconds"%(total_test,time.time()-start_time))
         print("Test Accuracy: %.2f%%"%(100*correct/total_test))
-        
