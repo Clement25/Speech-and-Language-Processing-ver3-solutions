@@ -1,7 +1,7 @@
 # slp3
 The most comprehensive solution on Github.
 Solutions and codes of the book "Speech and Language Processing (3rd Edition draft)" by Daniel Jurafsky and James H.Martin.
-If you have any questions about this repository, feel free to contact with me @ <henryhan88888@gmail.com>
+Feel free to contact me via <henryhan88888@gmail.com> should you have any questions about this repository.
 
 # slp3
 《语音和语言处理（第三版草稿）》一书课后习题的解答
