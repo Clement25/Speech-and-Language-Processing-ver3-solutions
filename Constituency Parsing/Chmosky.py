@@ -1,3 +1,4 @@
+from utils import get_grammar, display_grammar
 import copy
 
 """TODO: Buildup a non-terminal list 
@@ -43,21 +44,11 @@ def Chmosky(grammar):
                 for l_, r_ in temp_grammar:
                     if l_ == r[0]:
                         new_grammar.append((l, r_))
-                # print(l,r)
-                break
         temp_grammar = copy.deepcopy(new_grammar)
-        if r!='S':
-            exist = False
-            for C, B in new_grammar:
-                if r in B:
-                    exist = True
-                    break
-            if exist:
-                new_grammar.remove(B,[C])
     
-    process = True
+    """     process = True
     # move terminals to their own rules
-    """     while process:
+    while process:
         process = False
         for l, r in temp_grammar:
             if len(r) > 1:
@@ -81,40 +72,22 @@ def Chmosky(grammar):
                 process = True
                 unknown = True
                 # if rule exists, don't create a new rule
-                new_r = r[-2:]
+                new_r = r[0:2]
                 for l_, r_ in temp_grammar:
-                    if r_ == new_r:
+                    if r_ == new_r and l_[0]=='X':
                         unknown = False
                         new_l = l_
+                        break
                 if unknown:
                     new_l = 'X%d'%index
                     index += 1
                     new_grammar.append((new_l, new_r))
                 # replace all
                 new_grammar.remove((l,r))
-                new_grammar.append((l,r[0:-2]+[new_l]))
-        temp_grammar = copy.deepcopy(new_grammar)
+                new_grammar.append((l,[new_l]+r[2:]))
+            temp_grammar = copy.deepcopy(new_grammar)
 
     return new_grammar
-
-
-def get_grammar(string):
-    grammar = list()
-    for line in string.splitlines():
-        left, rights = line.split(' -> ')
-        for right in rights.split('|'):
-            grammar.append((left.strip(),[r.strip() for r in right.split()]))
-    return grammar
-
-def display(grammar):
-    disp_dic = {}
-    for g in grammar:
-        try:
-            disp_dic[g[0]].append(g[1])
-        except:
-            disp_dic[g[0]] = [g[1]]
-    for key, value in disp_dic.items():
-        print(key+" -> "+" | ".join([" ".join(v) for v in value]))
 
 if __name__ == '__main__':
     grammar = get_grammar('''\
