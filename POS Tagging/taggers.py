@@ -1,7 +1,8 @@
-from collections import defaultdict
 import time
 import ipdb
 import numpy as np
+import pandas as pd
+from collections import defaultdict
 from prettytable import PrettyTable
 
 class BLTagger(object):
@@ -119,19 +120,23 @@ class HMMTagger(object):
             if pair[0] == word:
                 print(pair,self.B[pair])
     
-    def display_conf(self):
-        table = PrettyTable(['\t']+[self.id2tag[i] for i in range(len(self.id2tag))])
-        for i in range(len(self.id2tag)):
-            table.add_row([self.id2tag[i]]+list(self.conf_matrix[i]))
-        print(table)
+    def _save_confusion(self, conf_matrix):
+        """ Save the confusion matrix to an excel file for easy checking
+        """
+        # table = PrettyTable(['\t']+[self.id2tag[i] for i in range(len(self.id2tag))])
+        # for i in range(len(self.id2tag)):
+        #     table.add_row([self.id2tag[i]]+list(conf_matrix[i]))
+        # print(table)
+        writer = pd.ExcelWriter('confusion.xlsx')
+        df1 = pd.DataFrame(conf_matrix, index=[self.id2tag[i] for i in range(len(self.id2tag))], columns=[self.id2tag[i] for i in range(len(self.id2tag))])
+        df1.to_excel(writer,'Sheet1')
+        writer.save()
 
     def test(self, test_sents, test_tags):
-        """ Implementation of Veterbi algorithm 
-        """
         correct = 0
         total_test = 0
         start_time = time.time()
-        self.conf_matrix = np.zeros((len(self.all_tags),len(self.all_tags)),dtype=np.int)
+        conf_matrix = np.zeros((len(self.all_tags),len(self.all_tags)),dtype=np.int)
         print_every = 10000
         for idx, sent in enumerate(test_sents):
             T = len(sent)
@@ -143,7 +148,11 @@ class HMMTagger(object):
                 try:
                     viterbi[s][0] = self.C[self.id2tag[s]]*self.B[(sent[0],self.id2tag[s])]
                 except:
-                    viterbi[s][0] = self.C[self.id2tag[s]]/self.vocab_size
+                    # if (word, tag) pair doesn't exist, treat as NNP
+                    viterbi[s][0] = 0
+            
+            if np.sum(viterbi[:][0]) == 0:
+                viterbi[self.tag2id['NNP']][0] = 1
 
             for t in range(1,len(sent)):
                 for s in range(num_tag):
@@ -170,9 +179,10 @@ class HMMTagger(object):
 
             for i in range(T):
                 correct += bestpath[i] == test_tags[idx][i]
-                self.conf_matrix[self.tag2id[bestpath[i]]][self.tag2id[test_tags[idx][i]]] += 1
+                conf_matrix[self.tag2id[bestpath[i]]][self.tag2id[test_tags[idx][i]]] += 1
             total_test += T
             if idx % print_every == 0:
                 print("Processing %d item..."%idx)
         print("Test %d examples in %.5f seconds"%(total_test,time.time()-start_time))
         print("Test Accuracy: %.2f%%"%(100*correct/total_test))
+        self._save_confusion(conf_matrix)

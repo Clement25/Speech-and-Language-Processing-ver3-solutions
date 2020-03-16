@@ -10,6 +10,8 @@ def main():
     train_data = [line.strip() for line in train_file]
     test_data = [line.strip() for line in test_file]
 
+    print(train_data[0:50])
+
     # Baseline model, "most likely tag"
     train_pairs = [(pair.split()[0], pair.split()[1]) for pair in train_data if pair]
     test_pairs = [(pair.split()[0], pair.split()[1]) for pair in test_data if pair]
@@ -26,6 +28,7 @@ def main():
     # exclude the last word in each scentence because they have no contribution to the transition probability
     train_pairs_hmm = [pair[0] for pair in train_pairs_bi]
 
+    # start of each sentence
     train_starts = [train_data[i].split()[1] for i in range(len(train_data)) if i == 0 or not train_data[i-1]]
     # test_pairs_hmm = [pair[0] for pair in test_pairs_bi]
     test_sents = []
@@ -49,11 +52,11 @@ def main():
     tags = [pair[1] for pair in train_pairs]
     all_tags = list(set(tags))
 
+    print(train_pairs[:20])
+    print(train_pairs_bi[:20])
+
     HMM_Tagger = HMMTagger(train_pairs, train_pairs_bi, train_starts, all_tags, len(vocab))
     HMM_Tagger.test(test_sents, test_tags)
-    ipdb.set_trace()
-    # display the confusion matrix
-    HMM_Tagger.display_conf()
 
 if __name__ == '__main__':
     main()
