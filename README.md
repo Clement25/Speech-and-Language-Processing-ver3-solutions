@@ -2,11 +2,7 @@
 The most comprehensive solution on Github.
 Solutions and codes of the book "Speech and Language Processing (3rd Edition draft)" by Daniel Jurafsky and James H.Martin.
 
-<<<<<<< HEAD
 The book can be found [here](https://web.stanford.edu/~jurafsky/slp3/ed3book.pdf).
-=======
-The book can be found [here]<https://web.stanford.edu/~jurafsky/slp3/ed3book.pdf>
->>>>>>> dd5f968... Update README.md
 
 Feel free to contact me via <henryhan88888@gmail.com> should you have any questions about this repository.
 
